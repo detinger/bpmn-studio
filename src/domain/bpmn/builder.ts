@@ -625,7 +625,7 @@ export function buildBpmnXml(input: DiagramSpec): string {
   const ordered = [...spec.nodes].sort((a, b) => depth(a) - depth(b));
   for (const n of ordered) {
     if (n.type === 'boundaryEvent') continue;
-    const extra = n.type === 'subProcess' || n.type === 'callActivity' ? (expandedIds.has(n.id) ? ' isExpanded="true"' : n.type === 'subProcess' ? ' isExpanded="false"' : '') : '';
+    const extra = n.type === 'subProcess' || n.type === 'callActivity' ? (expandedIds.has(n.id) ? ' isExpanded="true"' : n.type === 'subProcess' ? ' isExpanded="false"' : '') : n.type === 'exclusiveGateway' ? ' isMarkerVisible="true"' : '';
     lines.push(shape(n.id, bounds.get(n.id)!, extra, labelBounds(n)));
   }
   for (const n of spec.nodes) if (n.type === 'boundaryEvent') lines.push(shape(n.id, bounds.get(n.id)!, '', labelBounds(n)));
