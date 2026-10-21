@@ -5,7 +5,7 @@ import type { ValidationReport } from '../../domain/validation/types';
 import type { SimSnapshot } from '../token-simulation/controller';
 import { getTutorial, type TutorialObservations } from '../../data/tutorials';
 import { useProgress } from '../../app/progress';
-import { ProgressBar } from '../../components/ui';
+import { ProgressBar, RichText } from '../../components/ui';
 
 export function TutorialPanel({
   tutorialId,
@@ -112,7 +112,7 @@ export function TutorialPanel({
               <strong>{s.title}</strong>
               {i === currentIndex && (
                 <>
-                  <p>{s.instruction}</p>
+                  <RichText text={s.instruction} />
                   {showHint ? (
                     <p className="subtle">
                       <Lightbulb size={12} /> {s.hint}

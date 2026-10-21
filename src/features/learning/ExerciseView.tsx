@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, RotateCcw, XCircle } from 'lucide-react';
 import type { Concept } from '../../data/lessons';
 import { BpmnViewer } from '../../components/BpmnViewer';
-import { Callout } from '../../components/ui';
+import { Callout, RichText } from '../../components/ui';
 import { buildBpmnXml } from '../../domain/bpmn/builder';
 import { parseBpmnXml } from '../../domain/bpmn/parse';
 import { displayName, type ProcessGraph } from '../../domain/bpmn/graph';
@@ -131,7 +131,7 @@ export function ExerciseView({ concept }: { concept: Concept }) {
       ) : (
         <>
           <Callout kind={checked ? 'success' : 'error'} title={checked ? 'Correct!' : 'Not quite.'}>
-            {ex.explanation}
+            <RichText text={ex.explanation} />
           </Callout>
           <div className="row">
             <button className="btn" onClick={retry}>

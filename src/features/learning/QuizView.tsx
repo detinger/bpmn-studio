@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { RotateCcw } from 'lucide-react';
 import type { Concept } from '../../data/lessons';
 import { useProgress } from '../../app/progress';
-import { Callout } from '../../components/ui';
+import { Callout, RichText } from '../../components/ui';
 import { OptionRow, sameSet } from './ExerciseView';
 
 export function QuizView({ concept }: { concept: Concept }) {
@@ -62,7 +62,7 @@ export function QuizView({ concept }: { concept: Concept }) {
             {submitted && (
               <Callout kind={isCorrect(q) ? 'success' : 'error'}>
                 <strong>{isCorrect(q) ? 'Correct. ' : 'Not quite. '}</strong>
-                {q.explanation}
+                <RichText text={q.explanation} />
               </Callout>
             )}
           </fieldset>
