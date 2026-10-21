@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.bpmn-studio.org/assessment-result/v1.json",
+  "title": "BPMN Studio assessment result (v1)",
+  "description": "Explainable result of a challenge assessment. Every criterion states its dimension, status and feedback; the score is the weighted share of met criteria (partial = half).",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "challengeId": {
+      "type": "string"
+    },
+    "submittedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}"
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "passed": {
+      "type": "boolean"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "dimension": {
+            "enum": [
+              "structure",
+              "behavior",
+              "semantics",
+              "scenario",
+              "performance",
+              "reasoning"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "met",
+              "not-met",
+              "partial",
+              "not-applicable"
+            ]
+          },
+          "feedback": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "elementIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "dimension",
+          "label",
+          "status",
+          "feedback",
+          "weight"
+        ]
+      },
+      "minItems": 1
+    },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "improvements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "nextConcept": {
+      "type": "object",
+      "properties": {
+        "conceptId": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "conceptId",
+        "label"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "challengeId",
+    "submittedAt",
+    "score",
+    "passed",
+    "criteria",
+    "strengths",
+    "improvements"
+  ]
+}

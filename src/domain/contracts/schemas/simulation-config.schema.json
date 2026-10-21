@@ -1,0 +1,542 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.bpmn-studio.org/simulation-config/v1.json",
+  "title": "BPMN Studio simulation configuration (v1)",
+  "description": "Simulation-specific settings of a BPMN model, stored separately from the BPMN 2.0 XML. Element-specific settings are keyed by BPMN element id. Times are in minutes.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "processId": {
+      "type": "string"
+    },
+    "arrival": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "fixed",
+            "poisson",
+            "distribution"
+          ]
+        },
+        "interval": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "distribution": {
+          "$ref": "#/definitions/distribution"
+        },
+        "batchSize": {
+          "$ref": "#/definitions/distribution"
+        },
+        "startEventId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "interval"
+      ]
+    },
+    "numberOfCases": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "replications": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "warmUp": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "none"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "cases"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "count"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "time"
+            },
+            "duration": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "duration"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "calendarOffset": {
+      "type": "number",
+      "minimum": 0
+    },
+    "maxSimulationTime": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "sla": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "cycleTimeTarget": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "cycleTimeTarget"
+          ]
+        }
+      ]
+    },
+    "costs": {
+      "type": "object",
+      "properties": {
+        "waitingCostPerHour": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "waitingCostPerHour"
+      ]
+    },
+    "priorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "value",
+          "probability"
+        ]
+      }
+    },
+    "activities": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/activity"
+      }
+    },
+    "gateways": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "probabilities": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "required": [
+          "probabilities"
+        ]
+      }
+    },
+    "events": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "delay": {
+            "$ref": "#/definitions/distribution"
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "resourcePools": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/pool"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "version",
+    "arrival",
+    "numberOfCases",
+    "replications",
+    "seed",
+    "warmUp",
+    "calendarOffset",
+    "maxSimulationTime",
+    "sla",
+    "costs",
+    "priorities",
+    "activities",
+    "gateways",
+    "events",
+    "resourcePools"
+  ],
+  "definitions": {
+    "distribution": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "constant"
+            },
+            "value": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "uniform"
+            },
+            "min": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "triangular"
+            },
+            "min": {
+              "type": "number",
+              "minimum": 0
+            },
+            "mode": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "min",
+            "mode",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "normal"
+            },
+            "mean": {
+              "type": "number"
+            },
+            "sd": {
+              "type": "number",
+              "minimum": 0
+            },
+            "policy": {
+              "enum": [
+                "resample",
+                "truncate"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "mean",
+            "sd"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "lognormal"
+            },
+            "mean": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "sd": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "mean",
+            "sd"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "exponential"
+            },
+            "mean": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "type",
+            "mean"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "empirical"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              },
+              "minItems": 1
+            },
+            "weights": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          },
+          "required": [
+            "type",
+            "values"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "calendar": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "weekly"
+            },
+            "shifts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "days": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 6
+                    }
+                  },
+                  "start": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1440
+                  },
+                  "end": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1440
+                  }
+                },
+                "required": [
+                  "days",
+                  "start",
+                  "end"
+                ]
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "shifts"
+          ]
+        }
+      ]
+    },
+    "pool": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "costPerHour": {
+          "type": "number",
+          "minimum": 0
+        },
+        "calendar": {
+          "$ref": "#/definitions/calendar"
+        },
+        "discipline": {
+          "enum": [
+            "FIFO",
+            "PRIORITY"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "capacity",
+        "costPerHour",
+        "calendar",
+        "discipline"
+      ]
+    },
+    "activity": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "$ref": "#/definitions/distribution"
+        },
+        "resourcePoolId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fixedCost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "queueCapacity": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ]
+        },
+        "repeatProbability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maxIterations": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "instances": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "duration",
+        "resourcePoolId",
+        "fixedCost",
+        "queueCapacity"
+      ]
+    }
+  }
+}

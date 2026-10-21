@@ -1,0 +1,215 @@
+/*
+ * Theming of bpmn-js canvases, the properties panel and the token simulation.
+ *
+ * The renderer is configured with sentinel default colors (see
+ * features/modeler/bpmnConfig.ts). Shapes using default colors are recolored
+ * here through CSS variables, so the theme can switch without re-importing the
+ * diagram. Elements with user-defined colors keep their own colors.
+ *   default fill   #fffffe  -> rgb(255, 255, 254)
+ *   default stroke #010101  -> rgb(1, 1, 1)
+ *   default label  #010102  -> rgb(1, 1, 2)
+ */
+.bpmn-canvas svg [style*='fill: rgb(255, 255, 254)'] {
+  fill: var(--bpmn-fill) !important;
+}
+.bpmn-canvas svg [style*='stroke: rgb(1, 1, 1)'] {
+  stroke: var(--bpmn-stroke) !important;
+}
+.bpmn-canvas svg [style*='fill: rgb(1, 1, 1)'] {
+  fill: var(--bpmn-stroke) !important;
+}
+.bpmn-canvas svg [style*='fill: rgb(1, 1, 2)'] {
+  fill: var(--bpmn-label) !important;
+}
+.bpmn-canvas svg [style*='stroke: rgb(255, 255, 254)'] {
+  stroke: var(--bpmn-fill) !important;
+}
+
+.bpmn-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--canvas-bg);
+}
+.bpmn-canvas .djs-container {
+  background: var(--canvas-bg);
+}
+
+/* bpmn.io theme tokens in dark mode */
+:root[data-theme='dark'] .bio-theme-parent,
+:root[data-theme='dark'] .djs-parent {
+  --bio-surface: #171e27;
+  --bio-surface-overlay: #1c2430;
+  --bio-surface-subtle: #1c2430;
+  --bio-surface-medium: #233042;
+  --bio-surface-strong: #2b3a4f;
+  --bio-surface-inverted: #dfe6ee;
+  --bio-surface-inverted-subtle: #b8c3d0;
+  --bio-text: #e6ebf1;
+  --bio-text-subtle: #b2bdcb;
+  --bio-text-subtlest: #8a97a8;
+  --bio-text-on-primary: #0b1520;
+  --bio-text-on-inverted: #0f141b;
+  --bio-border: #3b4a5e;
+  --bio-border-subtle: #2b3645;
+  --bio-border-disabled: #2b3645;
+  --bio-border-input: #3b4a5e;
+  --bio-primary: #5aa7d8;
+  --bio-primary-hover: #7ab9e3;
+  --bio-primary-surface: #16314a;
+  --bio-primary-surface-strong: #1f4566;
+  --bio-danger: #f2776a;
+  --bio-danger-surface-subtle: #3b1d1a;
+  --bio-selected-surface: #233042;
+  --bio-selected-text: #e6ebf1;
+  --bio-focus: #5aa7d8;
+  --bio-focus-surface: #16314a;
+  --bio-canvas-accent: #5aa7d8;
+  --bio-canvas-accent-subtle: #2f5f82;
+  --bio-shadow: rgba(0, 0, 0, 0.6);
+  --bio-shadow-subtle: rgba(0, 0, 0, 0.35);
+  --canvas-fill-color: var(--canvas-bg);
+  --token-simulation-element-stroke-color: #d7dee8;
+  --token-simulation-element-fill-color: #1b232d;
+  --token-simulation-active-outgoing-flow-stroke-color: #d7dee8;
+  --token-simulation-inactive-outgoing-flow-stroke-color: #5c6878;
+  --token-simulation-highlighted-scope-fill-color: #233042;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .bio-theme-parent,
+  :root:not([data-theme='light']) .djs-parent {
+    --bio-surface: #171e27;
+    --bio-surface-overlay: #1c2430;
+    --bio-surface-subtle: #1c2430;
+    --bio-surface-medium: #233042;
+    --bio-surface-strong: #2b3a4f;
+    --bio-text: #e6ebf1;
+    --bio-text-subtle: #b2bdcb;
+    --bio-text-subtlest: #8a97a8;
+    --bio-border: #3b4a5e;
+    --bio-border-subtle: #2b3645;
+    --bio-primary: #5aa7d8;
+    --bio-primary-surface: #16314a;
+    --canvas-fill-color: var(--canvas-bg);
+    --token-simulation-element-stroke-color: #d7dee8;
+    --token-simulation-element-fill-color: #1b232d;
+  }
+}
+
+/* keep the bpmn.io watermark visible (license requirement) */
+.bjs-powered-by {
+  z-index: 10 !important;
+  opacity: 0.85;
+}
+
+/* ---------- validation overlays ---------- */
+.issue-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  border: 2px solid var(--canvas-bg);
+}
+.issue-marker.error {
+  background: #c0392b;
+}
+.issue-marker.warning {
+  background: #c27d14;
+}
+.issue-marker.recommendation {
+  background: #2b6cb0;
+}
+.djs-element.has-issue-error .djs-visual > :first-child {
+  stroke: #c0392b !important;
+  stroke-width: 3px !important;
+}
+.djs-element.has-issue-warning .djs-visual > :first-child {
+  stroke: #c27d14 !important;
+  stroke-width: 2.5px !important;
+}
+.djs-connection.has-issue-error .djs-visual > path {
+  stroke: #c0392b !important;
+}
+.djs-element.issue-focus .djs-visual > :first-child {
+  stroke: var(--accent) !important;
+  stroke-width: 4px !important;
+}
+.djs-element.highlight-element .djs-visual > :first-child {
+  stroke: var(--accent) !important;
+  stroke-width: 3.5px !important;
+}
+.djs-connection.highlight-element .djs-visual > path {
+  stroke: var(--accent) !important;
+  stroke-width: 3px !important;
+}
+.djs-element.highlight-success .djs-visual > :first-child {
+  stroke: #2f855a !important;
+  stroke-width: 3.5px !important;
+}
+.djs-element.highlight-error .djs-visual > :first-child {
+  stroke: #c0392b !important;
+  stroke-width: 3.5px !important;
+}
+
+/* heatmap overlay for bottleneck visualization */
+.heat-badge {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+/* token simulation: our panel replaces the built-in log; keep palette */
+.bts-log {
+  display: none !important;
+}
+.bts-toggle-mode {
+  display: none !important;
+}
+
+/* properties panel host */
+.properties-host {
+  height: 100%;
+  overflow: auto;
+}
+.properties-host .bio-properties-panel-container {
+  --font-family: var(--font-sans);
+}
+.properties-host .bio-properties-panel {
+  background: transparent;
+}
+
+/* mini viewers */
+.mini-canvas {
+  height: 260px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+  background: var(--canvas-bg);
+}
+.mini-canvas.tall {
+  height: 360px;
+}
+.mini-canvas.clickable .djs-element:not(.djs-connection):hover .djs-visual > :first-child {
+  stroke: var(--primary) !important;
+  stroke-width: 3px !important;
+  cursor: pointer;
+}
+.mini-canvas .djs-palette {
+  display: none;
+}

@@ -1,0 +1,43 @@
+{
+	admin off
+	persist_config off
+	# Railway terminates HTTPS at its edge
+	auto_https off
+	log {
+		format json
+	}
+	servers {
+		# trust Railway's proxy for client IPs
+		trusted_proxies static private_ranges 100.0.0.0/8
+	}
+}
+
+:{$PORT:8080} {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	handle /health {
+		respond "ok" 200
+	}
+
+	handle {
+		root * /srv
+
+		# hashed build output never changes
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+
+		# revalidate the entry page so a new deployment is picked up at once
+		@entry path / /index.html
+		header @entry Cache-Control "no-cache"
+
+		# the app uses hash routing; the fallback only catches mistyped paths
+		try_files {path} /index.html
+		file_server
+	}
+}

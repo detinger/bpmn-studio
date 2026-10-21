@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.bpmn-studio.org/process-model/v1.json",
+  "title": "BPMN Studio process model (v1)",
+  "description": "Metadata of a stored process model. The BPMN 2.0 XML is kept unmodified in `xml` with stable element ids; simulation settings are stored separately (simulation-config).",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}"
+    },
+    "updatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "role": {
+      "enum": [
+        "as-is",
+        "to-be"
+      ]
+    },
+    "pairId": {
+      "type": "string"
+    },
+    "baseDiagramId": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "blank",
+            "example",
+            "challenge",
+            "import",
+            "duplicate",
+            "tutorial"
+          ]
+        },
+        "ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "xml": {
+      "type": "string",
+      "pattern": "definitions"
+    },
+    "svg": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "description",
+    "createdAt",
+    "updatedAt",
+    "version",
+    "origin",
+    "tags"
+  ]
+}

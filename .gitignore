@@ -1,0 +1,13 @@
+node_modules
+dist
+coverage
+test-results
+playwright-report
+.DS_Store
+*.log
+
+# reference material, not part of the app (not for publication)
+Wien/
+Signavio/
+BPMN2_0_Poster_EN_PM.pdf
+BPMN-20-Poster-EN.png

@@ -1,0 +1,255 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.bpmn-studio.org/simulation-run/v1.json",
+  "title": "BPMN Studio simulation run (v1)",
+  "description": "Result of a simulation experiment: the exact configuration, the executability report, and KPI estimates across independent replications (mean, standard deviation and half width of the 95% confidence interval). Times in minutes, costs in currency units, utilization and rates as fractions.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}"
+    },
+    "modelName": {
+      "type": "string"
+    },
+    "modelVersion": {
+      "type": "integer"
+    },
+    "configVersion": {
+      "type": "integer"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "replicationCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "config": {
+      "$ref": "https://schemas.bpmn-studio.org/simulation-config/v1.json"
+    },
+    "support": {
+      "type": "object",
+      "properties": {
+        "processId": {
+          "type": "string"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "enum": [
+                  "blocking",
+                  "approximation",
+                  "assumption"
+                ]
+              },
+              "code": {
+                "type": "string"
+              },
+              "elementIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "level",
+              "code",
+              "elementIds",
+              "message"
+            ]
+          }
+        },
+        "runnable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "findings",
+        "runnable"
+      ]
+    },
+    "kpis": {
+      "type": "object",
+      "properties": {
+        "cycleTime": {
+          "$ref": "#/definitions/estimate"
+        },
+        "processingTime": {
+          "$ref": "#/definitions/estimate"
+        },
+        "waitingTime": {
+          "$ref": "#/definitions/estimate"
+        },
+        "throughputPerHour": {
+          "$ref": "#/definitions/estimate"
+        },
+        "wipAvg": {
+          "$ref": "#/definitions/estimate"
+        },
+        "slaCompliance": {
+          "$ref": "#/definitions/estimate"
+        },
+        "costPerCase": {
+          "$ref": "#/definitions/estimate"
+        },
+        "reworkRate": {
+          "$ref": "#/definitions/estimate"
+        },
+        "cycleTimeP90": {
+          "$ref": "#/definitions/estimate"
+        }
+      },
+      "required": [
+        "cycleTime",
+        "processingTime",
+        "waitingTime",
+        "throughputPerHour",
+        "wipAvg",
+        "slaCompliance",
+        "costPerCase",
+        "reworkRate",
+        "cycleTimeP90"
+      ]
+    },
+    "activities": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "executions": {
+            "$ref": "#/definitions/estimate"
+          },
+          "processing": {
+            "$ref": "#/definitions/estimate"
+          },
+          "waiting": {
+            "$ref": "#/definitions/estimate"
+          },
+          "queueLengthAvg": {
+            "$ref": "#/definitions/estimate"
+          },
+          "cost": {
+            "$ref": "#/definitions/estimate"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "executions",
+          "processing",
+          "waiting",
+          "queueLengthAvg",
+          "cost"
+        ]
+      }
+    },
+    "pools": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer"
+          },
+          "utilization": {
+            "$ref": "#/definitions/estimate"
+          },
+          "queueLengthAvg": {
+            "$ref": "#/definitions/estimate"
+          },
+          "cost": {
+            "$ref": "#/definitions/estimate"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "capacity",
+          "utilization",
+          "queueLengthAvg",
+          "cost"
+        ]
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "runId",
+    "createdAt",
+    "seed",
+    "replicationCount",
+    "config",
+    "support",
+    "kpis",
+    "activities",
+    "pools",
+    "warnings"
+  ],
+  "definitions": {
+    "estimate": {
+      "type": "object",
+      "properties": {
+        "mean": {
+          "type": "number"
+        },
+        "sd": {
+          "type": "number"
+        },
+        "ciHalfWidth": {
+          "type": "number"
+        },
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "mean",
+        "sd",
+        "ciHalfWidth",
+        "min",
+        "max",
+        "n"
+      ]
+    }
+  }
+}

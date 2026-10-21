@@ -1,0 +1,454 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.bpmn-studio.org/educational-scenario/v1.json",
+  "title": "BPMN Studio educational scenario (v1)",
+  "description": "A challenge: business scenario, starting model(s), assessment criteria and progressive hints. Assessment uses behavior-based criteria (roles identified by keywords, ordering, concurrency, exclusivity, soundness) and simulation targets — never visual comparison.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "type": {
+      "enum": [
+        "build",
+        "fix",
+        "predict",
+        "deadlock",
+        "improve",
+        "compare"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "minutes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scenario": {
+      "type": "string",
+      "minLength": 20
+    },
+    "hints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "start": {
+      "$ref": "#/definitions/spec"
+    },
+    "spec": {
+      "$ref": "#/definitions/spec"
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/role"
+      }
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "role",
+              "gateway",
+              "endEvents",
+              "sound",
+              "noErrors",
+              "always",
+              "optional",
+              "exclusive",
+              "precedes",
+              "concurrent",
+              "boundary",
+              "pools",
+              "messageFlows"
+            ]
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      }
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "enum": [
+              "cycleTime",
+              "cycleTimeP90",
+              "waitingTime",
+              "costPerCase",
+              "slaCompliance",
+              "maxUtilization"
+            ]
+          },
+          "op": {
+            "enum": [
+              "<=",
+              ">="
+            ]
+          },
+          "value": {
+            "type": "number"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "metric",
+          "op",
+          "value",
+          "label"
+        ]
+      }
+    },
+    "maxWorkers": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "choices": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "triggeredBoundaries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "description"
+        ]
+      },
+      "minItems": 1
+    },
+    "question": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2
+    },
+    "correctOption": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "alternatives": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/definitions/spec"
+          },
+          "sim": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "spec",
+          "sim"
+        ]
+      }
+    },
+    "metric": {
+      "enum": [
+        "cycleTime",
+        "waitingTime",
+        "costPerCase",
+        "slaCompliance"
+      ]
+    },
+    "better": {
+      "enum": [
+        "lower",
+        "higher"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "correctFor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "text",
+          "correctFor"
+        ]
+      },
+      "minItems": 2
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "title",
+    "level",
+    "minutes",
+    "summary",
+    "scenario",
+    "hints",
+    "concepts"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "build",
+              "fix"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "roles",
+          "criteria"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "improve"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "start",
+          "roles",
+          "criteria",
+          "targets",
+          "maxWorkers"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "predict"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "spec",
+          "candidates",
+          "scenarios"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "deadlock"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "spec",
+          "question",
+          "options",
+          "correctOption"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "compare"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "alternatives",
+          "metric",
+          "better",
+          "question",
+          "reasons"
+        ]
+      }
+    }
+  ],
+  "definitions": {
+    "spec": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ]
+          }
+        },
+        "flows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ]
+          }
+        }
+      },
+      "required": [
+        "nodes",
+        "flows"
+      ],
+      "description": "Diagram in the BPMN Studio layout DSL (converted to BPMN 2.0 XML by buildBpmnXml)."
+    },
+    "role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "activity",
+              "event",
+              "start",
+              "end",
+              "gateway"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "keywords"
+      ]
+    }
+  }
+}
