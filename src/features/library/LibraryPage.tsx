@@ -60,7 +60,6 @@ export default function LibraryPage() {
             <input
               ref={fileRef}
               type="file"
-              accept=".bpmn,.xml"
               hidden
               onChange={async (e) => {
                 const f = e.target.files?.[0];

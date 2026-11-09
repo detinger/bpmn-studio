@@ -152,7 +152,6 @@ export function ModelerToolbar(p: Props) {
         <input
           ref={fileRef}
           type="file"
-          accept=".bpmn,.xml,application/xml,text/xml"
           hidden
           onChange={(e) => {
             const f = e.target.files?.[0];
