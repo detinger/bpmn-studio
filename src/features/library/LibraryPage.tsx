@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Copy, Download, FilePlus2, FlaskConical, FolderOpen, PenTool, Scale, Search, Trash2, Upload, Archive } from 'lucide-react';
 import { EXAMPLES } from '../../data/examples';
 import { deleteDiagram, duplicateDiagram, exportBackup, importBackup, listDiagrams, type Backup, type StoredDiagram } from '../../storage/db';
-import { createBlankDiagram, importBpmn, openExample, openExamplePair } from '../../services/diagrams';
+import { BPMN_FILE_ACCEPT, createBlankDiagram, importBpmnFile, openExample, openExamplePair } from '../../services/diagrams';
 import { useToast } from '../../app/toast';
 import { EmptyState, downloadText, safeFileName } from '../../components/ui';
 import { buildBpmnXml } from '../../domain/bpmn/builder';
@@ -60,13 +60,14 @@ export default function LibraryPage() {
             <input
               ref={fileRef}
               type="file"
+              accept={BPMN_FILE_ACCEPT}
               hidden
               onChange={async (e) => {
                 const f = e.target.files?.[0];
                 e.target.value = '';
                 if (!f) return;
                 try {
-                  const { diagram } = await importBpmn(await f.text(), f.name);
+                  const { diagram } = await importBpmnFile(f);
                   notify(`Imported “${diagram.name}”`, { kind: 'success' });
                   reload();
                 } catch (err) {

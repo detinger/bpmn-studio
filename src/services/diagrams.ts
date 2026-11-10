@@ -81,6 +81,20 @@ export async function importBpmn(xml: string, fileName = 'Imported process'): Pr
   return { diagram, warnings: parsed.warnings };
 }
 
+/** File-picker filter for BPMN imports; a hint only — the browser still lets users choose "All files". */
+export const BPMN_FILE_ACCEPT = '.bpmn,.xml,text/xml,application/xml';
+
+/** Largest file the importer will read into memory. */
+export const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
+
+/** Import a user-selected file, rejecting oversized files before reading them. */
+export async function importBpmnFile(file: File): Promise<{ diagram: StoredDiagram; warnings: string[] }> {
+  if (file.size > MAX_IMPORT_BYTES) {
+    throw new ImportError(`The file is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). The limit is ${MAX_IMPORT_BYTES / 1024 / 1024} MB.`);
+  }
+  return importBpmn(await file.text(), file.name);
+}
+
 /** Load the simulation config of a diagram, creating or syncing it with the current model. */
 export async function loadSyncedConfig(diagram: StoredDiagram): Promise<{ config: SimulationConfig; graphError?: string }> {
   let parsed;

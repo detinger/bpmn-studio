@@ -22,6 +22,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import type { Severity } from '../../domain/validation/types';
+import { BPMN_FILE_ACCEPT } from '../../services/diagrams';
 
 export type SaveState = 'saved' | 'saving' | 'dirty' | 'error';
 
@@ -152,6 +153,7 @@ export function ModelerToolbar(p: Props) {
         <input
           ref={fileRef}
           type="file"
+          accept={BPMN_FILE_ACCEPT}
           hidden
           onChange={(e) => {
             const f = e.target.files?.[0];

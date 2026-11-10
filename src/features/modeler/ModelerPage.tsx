@@ -21,7 +21,7 @@ import { validateModel } from '../../domain/validation/validate';
 import type { ValidationIssue, ValidationReport } from '../../domain/validation/types';
 import { syncConfigWithGraph, type SimulationConfig } from '../../domain/simulation/config';
 import { getDiagram, listDiagrams, saveDiagram, saveSettings, getSettings, saveSimConfig, duplicateDiagram, type StoredDiagram } from '../../storage/db';
-import { createBlankDiagram, importBpmn, loadSyncedConfig } from '../../services/diagrams';
+import { createBlankDiagram, importBpmnFile, loadSyncedConfig } from '../../services/diagrams';
 import { useToast } from '../../app/toast';
 import { Tabs, downloadText, safeFileName } from '../../components/ui';
 
@@ -321,8 +321,7 @@ export default function ModelerPage() {
 
   const onImport = async (file: File) => {
     try {
-      const text = await file.text();
-      const { diagram: d, warnings } = await importBpmn(text, file.name);
+      const { diagram: d, warnings } = await importBpmnFile(file);
       notify(`Imported “${d.name}”`, { kind: 'success', message: warnings.length ? `${warnings.length} import warning(s) — see the Issues panel.` : undefined });
       navigate(`/modeler/${d.id}`);
     } catch (err) {
